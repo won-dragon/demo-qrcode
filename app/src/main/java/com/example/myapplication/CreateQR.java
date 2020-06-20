@@ -1,18 +1,15 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import com.example.myapplication.service.RestService;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 
 public class CreateQR extends AppCompatActivity {
 
@@ -25,7 +22,14 @@ public class CreateQR extends AppCompatActivity {
         setContentView(R.layout.activity_create_qr);
 
         iv = (ImageView)findViewById(R.id.qrcode);
-        text = "shiuser/010-1234-1234/shi-user@shi-ict.com";
+
+        Intent intent = getIntent(); /*데이터 수신*/
+
+        String userName = intent.getExtras().getString("userName");
+        String userHp = intent.getExtras().getString("userHp");
+        String userEmail = intent.getExtras().getString("userEmail");
+
+        text = userName + "/" + userHp + "/" + userEmail;
 
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try{
@@ -34,18 +38,8 @@ public class CreateQR extends AppCompatActivity {
             Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
             iv.setImageBitmap(bitmap);
 
-            // Post Action
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    execute(text);
-                }
-            }).start();
         }catch (Exception e){}
     }
 
-        private void execute(String text){
-            RestService restService = new RestService();
-            restService.postAction("/user-info/users",text);
-        }
+
 }

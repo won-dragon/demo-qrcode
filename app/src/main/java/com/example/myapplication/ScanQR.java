@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import com.example.myapplication.service.RestService;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -31,9 +32,22 @@ public class ScanQR extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
                 // todo
+                // Post Action
+                final String text = result.getContents();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        execute(text);
+                    }
+                }).start();
+
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+        private void execute(String text){
+            RestService restService = new RestService();
+            restService.postAction("/user-info/users",text);
+        }
 }
